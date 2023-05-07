@@ -8,9 +8,9 @@ import random
 
 # データセットを取得
 housing = fetch_california_housing(as_frame=True)
-header = list(housing["frame"].columns.values)
 
 # DataTableのheaderをlist化
+header = list(housing["frame"].columns.values)
 allList = []
 for i in header:
     allList.append(housing["frame"][i].to_list())
