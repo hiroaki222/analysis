@@ -23,8 +23,20 @@ allList = [housing["frame"][i].to_list() for i in header]
 7 Longitude： ブロックグループの中心点の「経度」。値が－方向に大きいほど、そのブロックグループは西にある
 8 MedHouseVal （median house value）：「住宅価格」（100,000ドル＝10万ドル単位）の中央値。通常はこの数値が目的変数として使われる
 '''
+# 辞書作成
+titleDict = {
+    "MedInc" : "所得の中央値",
+    "HouseAge" : "築年数の中央値",
+    "AveRooms" : "部屋数の平均値",
+    "AveBedrms" : "寝室数の平均値",
+    "Population" : "人口",
+    "AveOccup" : "世帯人数の平均値",
+    "Latitude" : "ブロック中心の緯度",
+    "Longitude" : "ブロック中心の経度",
+    "MedHouseVal" : "住宅価格の中央値(10万ドル単位)"
+}
 
-def ex(header, allList, X, Y):
+def ex(header, allList, titleDict, X, Y):
     # フォルダ作成
     os.makedirs("figure", exist_ok=True)
 
@@ -47,29 +59,27 @@ def ex(header, allList, X, Y):
     predicted = model.predict(source)
 
     # プロット
+    title = f"{titleDict[header[X]]} - {titleDict[header[Y]]}" # タイトル作成
+    plt.title(title) # タイトル表示
     plt.xlim(min(allList[X]), max(allList[X])) # データの最小値を最大値をグラフの最大値と最小値に
     plt.ylim(min(allList[X]), max(allList[Y]))
     plt.scatter(x, y) # プロット
-    plt.xlabel(header[X]) # X軸ラベル
-    plt.ylabel(header[Y]) # Y軸ラベル
+    plt.xlabel(titleDict[header[X]]) # X軸ラベル
+    plt.ylabel(titleDict[header[Y]]) # Y軸ラベル
     plt.plot(source, predicted, color = 'red') # 予測線
     plt.savefig(f"figure/{header[X]}-{header[Y]}.png") # エクスポート
-    plt.clf()
+    plt.clf() # プロットクリア
 
     # json形式でも結果を保存
-    tmp = {f"{header[X]}-{header[Y]}" : {
-    "切片":f"{model.intercept_}",
-    "傾き":f"{model.coef_}",
+    tmp = {
+    "関数":f"y = {model.coef_[0]}x + {model.intercept_}",
     "x" : f"{source}",
     "y" : f"{predicted}"
-    }}
-    return tmp
+    }
+    return [title, tmp]
 
 # 全部について最小二乗法を行う
-rst = {}
-for i in range(len(header)):
-    for j in range(i+1, len(header)):
-        rst.update(ex(header, allList, i, j))
+rst = {ex(header, allList, titleDict, i, j)[0] : ex(header, allList, titleDict, i, j)[1] for i in range(len(header)) for j in range(i+1, len(header))}
 
 # json出力
 with open('result.json', 'w') as f:
