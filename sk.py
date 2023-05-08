@@ -11,9 +11,7 @@ housing = fetch_california_housing(as_frame=True)
 
 # DataTableのheaderをlist化
 header = list(housing["frame"].columns.values)
-allList = []
-for i in header:
-    allList.append(housing["frame"][i].to_list())
+allList = [housing["frame"][i].to_list() for i in header]
 ''' ヘッダー名と説明
 0 MedInc（median income）： 各ブロックグループ内にある世帯ごとの「所得」の中央値。※明示されていないが、1990年のカリフォルニアの世帯収入の中央値が3万ドル台であるため、恐らく1万ドル（＝10,000ドル）単位だと推定される
 1 HouseAge（median house age）： ブロックグループの「築年数」の中央値
@@ -54,8 +52,9 @@ def ex(header, allList, X, Y):
     plt.scatter(x, y) # プロット
     plt.xlabel(header[X]) # X軸ラベル
     plt.ylabel(header[Y]) # Y軸ラベル
-    plt.plot(source, predicted, color = 'blue') # 予測線
+    plt.plot(source, predicted, color = 'red') # 予測線
     plt.savefig(f"figure/{header[X]}-{header[Y]}.png") # エクスポート
+    plt.clf()
 
     # json形式でも結果を保存
     tmp = {f"{header[X]}-{header[Y]}" : {
