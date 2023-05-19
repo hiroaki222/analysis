@@ -1,7 +1,5 @@
 from sklearn.linear_model import LinearRegression
-import numpy as np
 import pandas as pd
-import random
 import matplotlib.pyplot as plt
 
 #pd.set_option('display.max_rows', None)
