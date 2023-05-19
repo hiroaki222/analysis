@@ -111,7 +111,7 @@ model.add(Activation("sigmoid"))
 model.compile(loss = 'binary_crossentropy', optimizer = 'adam',  metrics = ['accuracy'])
 
 # 学習
-fit = model.fit(x, y, epochs = 25, batch_size = 16, verbose = 2)
+fit = model.fit(x, y, epochs = 50, batch_size = 16, verbose = 2)
 
 # 予測
 y_test_proba = model.predict(test)
@@ -131,12 +131,12 @@ loss = fit.history['loss']
 plt.plot(accuracy)
 plt.title('Training Accuracy')
 plt.xlabel('Epochs')
-plt.savefig("figure/TrainingAccuracy'.png")
+plt.savefig("figure/TrainingAccuracy.png")
 plt.clf()
 
 # 損失の履歴をプロット
 plt.plot(loss)
 plt.title('Training Loss')
 plt.xlabel('Epochs')
-plt.savefig("figure/Training Loss'.png")
+plt.savefig("figure/Training Loss.png")
 plt.clf()
