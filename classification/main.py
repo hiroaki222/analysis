@@ -1,4 +1,4 @@
-from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from keras.layers import Activation, BatchNormalization, Dense
 from keras.layers.core import Dropout
@@ -77,9 +77,15 @@ test.loc[:,'Pclass'], test.loc[:,'Fare'] = tmp['Pclass'], tmp['Fare']
 # testの欠損値を中央値で埋める
 test['Fare'].fillna(test['Fare'].median(), inplace = True)
 
-# 学習データとテストデータを分ける
+df, vali = train_test_split(df,test_size=0.4,random_state=0)
+
+# 学習データ
 x = df.drop(columns='Survived')
 y = df[['Survived']]
+
+# 検証データ
+vx = vali.drop(columns='Survived')
+vy = vali[['Survived']]
 
 activation, out_dim, dropout = 'relu', '702', 0.5
 # モデル指定
@@ -111,7 +117,7 @@ model.add(Activation("sigmoid"))
 model.compile(loss = 'binary_crossentropy', optimizer = 'adam',  metrics = ['accuracy'])
 
 # 学習
-fit = model.fit(x, y, epochs = 50, batch_size = 16, verbose = 2)
+fit = model.fit(x, y, epochs = 25, validation_data=(vx, vy), batch_size = 16, verbose = 2)
 
 # 予測
 y_test_proba = model.predict(test)
@@ -126,9 +132,13 @@ df_output.to_csv('result.csv', index = False)
 # 学習データの精度を確認
 accuracy = fit.history['accuracy']
 loss = fit.history['loss']
+val_accuracy = fit.history['val_accuracy']
+val_loss = fit.history['val_loss']
 
 # 精度の履歴をプロット
 plt.plot(accuracy)
+plt.plot(val_accuracy)
+plt.legend(["学習データ", "検証データ"])
 plt.title('Training Accuracy')
 plt.xlabel('Epochs')
 plt.savefig("figure/TrainingAccuracy.png")
@@ -136,6 +146,8 @@ plt.clf()
 
 # 損失の履歴をプロット
 plt.plot(loss)
+plt.plot(val_loss)
+plt.legend(["学習データ", "検証データ"])
 plt.title('Training Loss')
 plt.xlabel('Epochs')
 plt.savefig("figure/Training Loss.png")
