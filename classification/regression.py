@@ -3,10 +3,19 @@ from sklearn.linear_model import LinearRegression
 import numpy as np
 import pandas as pd
 import random
+import matplotlib.pyplot as plt
 
+#pd.set_option('display.max_rows', None)
 train = pd.read_csv('train.csv')
-train = train.dropna(subset=['Cabin'], axis=0)
 
+plt.scatter(train['PassengerId'], train['Age'])
+plt.savefig(f"figure.png")
+plt.clf()
+
+print(train)
+train = train.drop('Cabin', axis=1)
+train = train.drop('Name', axis=1)
+train = train.drop('Ticket', axis=1)
 train.replace({'Sex': {'male': 0, 'female': 1}}, inplace=True)
 train.replace({'Embarked': {'S': 0, 'C': 1, 'Q':2}}, inplace=True)
 
@@ -30,6 +39,11 @@ model.fit(XTrain, yTrain)
 y_pred = model.predict(XTest)
 # 保管
 train.loc[train['Age'].isnull(), 'Age'] = y_pred
+print(train)
 print(train.isnull().sum())
 """ X = train[['Pclass', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked']].values
 y = train['Age'].values """
+
+plt.scatter(train['PassengerId'], train['Age'])
+plt.savefig(f"figure1.png")
+plt.clf()
