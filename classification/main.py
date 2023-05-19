@@ -77,6 +77,7 @@ test.loc[:,'Pclass'], test.loc[:,'Fare'] = tmp['Pclass'], tmp['Fare']
 # testの欠損値を中央値で埋める
 test['Fare'].fillna(test['Fare'].median(), inplace = True)
 
+# 学習データと検証データを分ける
 df, vali = train_test_split(df,test_size=0.4,random_state=0)
 
 # 学習データ
