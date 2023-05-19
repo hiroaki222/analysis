@@ -10,12 +10,14 @@ plt.savefig(f"figure.png")
 plt.clf()
 
 print(train)
+# 要らんカラムを落とす
 train = train.drop('Cabin', axis=1)
 train = train.drop('Name', axis=1)
 train = train.drop('Ticket', axis=1)
+# stringをintに
 train.replace({'Sex': {'male': 0, 'female': 1}}, inplace=True)
 train.replace({'Embarked': {'S': 0, 'C': 1, 'Q':2}}, inplace=True)
-
+# これは適当に中央値で埋める
 train['Embarked'].fillna(train['Embarked'].median(), inplace=True)
 
 
@@ -38,8 +40,6 @@ y_pred = model.predict(XTest)
 train.loc[train['Age'].isnull(), 'Age'] = y_pred
 print(train)
 print(train.isnull().sum())
-""" X = train[['Pclass', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked']].values
-y = train['Age'].values """
 
 plt.scatter(train['PassengerId'], train['Age'])
 plt.savefig(f"figure1.png")
