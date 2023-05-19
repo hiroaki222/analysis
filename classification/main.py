@@ -1,4 +1,4 @@
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold, train_test_split
 from sklearn.preprocessing import StandardScaler
 from keras.layers import Activation, BatchNormalization, Dense
 from keras.layers.core import Dropout
@@ -77,52 +77,51 @@ test.loc[:,'Pclass'], test.loc[:,'Fare'] = tmp['Pclass'], tmp['Fare']
 # testの欠損値を中央値で埋める
 test['Fare'].fillna(test['Fare'].median(), inplace = True)
 
-# 学習データと検証データを分ける
-df, vali = train_test_split(df,test_size=0.4,random_state=0)
-
-# 学習データ
-x = df.drop(columns='Survived')
+X = df.drop(columns='Survived')
 y = df[['Survived']]
 
-# 検証データ
-vx = vali.drop(columns='Survived')
-vy = vali[['Survived']]
 
-activation, out_dim, dropout = 'relu', '702', 0.5
-# モデル指定
-model = Sequential()
+kf = KFold(n_splits = 10)
 
-# 入力層 - 隠れ層1
-model.add(Dense(input_dim = len(test.columns), units = out_dim))
-model.add(BatchNormalization())
-model.add(Activation(activation))
-model.add(Dropout(dropout))
+for train_index, test_index in kf.split(X):
+    X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+    y_train, y_test = y.iloc[train_index], y.iloc[test_index]
 
-# 隠れ層1 - 隠れ層2
-model.add(Dense(units = out_dim))
-model.add(BatchNormalization())
-model.add(Activation(activation))
-model.add(Dropout(dropout))
+    activation, out_dim, dropout = 'relu', '702', 0.5
+    # モデル指定
+    model = Sequential()
 
-# 隠れ層2 - 隠れ層3
-model.add(Dense(units = out_dim))
-model.add(BatchNormalization())
-model.add(Activation(activation))
-model.add(Dropout(dropout))
+    # 入力層 - 隠れ層1
+    model.add(Dense(input_dim = len(test.columns), units = out_dim))
+    model.add(BatchNormalization())
+    model.add(Activation(activation))
+    model.add(Dropout(dropout))
 
-# 隠れ層3 - 出力層
-model.add(Dense(units = 1))
-model.add(Activation("sigmoid"))
+    # 隠れ層1 - 隠れ層2
+    model.add(Dense(units = out_dim))
+    model.add(BatchNormalization())
+    model.add(Activation(activation))
+    model.add(Dropout(dropout))
 
-# Kerasモデルをコンパイル
-model.compile(loss = 'binary_crossentropy', optimizer = 'adam',  metrics = ['accuracy'])
+    # 隠れ層2 - 隠れ層3
+    model.add(Dense(units = out_dim))
+    model.add(BatchNormalization())
+    model.add(Activation(activation))
+    model.add(Dropout(dropout))
 
-# 学習
-fit = model.fit(x, y, epochs = 25, validation_data=(vx, vy), batch_size = 16, verbose = 2)
+    # 隠れ層3 - 出力層
+    model.add(Dense(units = 1))
+    model.add(Activation("sigmoid"))
 
-# 予測
-y_test_proba = model.predict(test)
-y_test = np.round(y_test_proba).astype(int)
+    # Kerasモデルをコンパイル
+    model.compile(loss = 'binary_crossentropy', optimizer = 'adam',  metrics = ['accuracy'])
+
+    # 学習
+    fit = model.fit(X_train, y_train, epochs = 16, validation_data=(X_test, y_test), batch_size = 16, verbose = 2)
+
+    # 予測
+    y_test_proba = model.predict(test)
+    y_test = np.round(y_test_proba).astype(int)
 
 # PassengerId のDataFrameと結果を結合する
 df_output = pd.concat([index, pd.DataFrame(y_test, columns = ['Survived'])], axis = 1)
