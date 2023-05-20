@@ -88,7 +88,9 @@ y = df[['Survived']]
 vx = vali.drop(columns='Survived')
 vy = vali[['Survived']]
 
+# パラメーター定義
 activation, out_dim, dropout = 'relu', '702', 0.5
+
 # モデル指定
 model = Sequential()
 
