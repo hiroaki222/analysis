@@ -1,4 +1,5 @@
-from sklearn.model_selection import KFold, train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
 from keras.layers import Activation, BatchNormalization, Dense
 from keras.layers.core import Dropout
@@ -82,7 +83,7 @@ X = df.drop(columns='Survived')
 y = df[['Survived']]
 
 # 交差検証を行う
-kf = KFold(n_splits = 40)
+kf = KFold(n_splits = 2)
 for train_index, test_index in kf.split(X):
     X_train, X_test = X.iloc[train_index], X.iloc[test_index]
     y_train, y_test = y.iloc[train_index], y.iloc[test_index]
@@ -135,20 +136,12 @@ loss = fit.history['loss']
 val_accuracy = fit.history['val_accuracy']
 val_loss = fit.history['val_loss']
 
-# 精度の履歴をプロット
-plt.plot(accuracy)
-plt.plot(val_accuracy)
-plt.legend(["学習データ", "検証データ"])
-plt.title('Training Accuracy')
-plt.xlabel('Epochs')
-plt.savefig("figure/TrainingAccuracy.png")
-plt.clf()
-
-# 損失の履歴をプロット
-plt.plot(loss)
-plt.plot(val_loss)
-plt.legend(["学習データ", "検証データ"])
-plt.title('Training Loss')
-plt.xlabel('Epochs')
-plt.savefig("figure/Training Loss.png")
-plt.clf()
+fig, axes = plt.subplots(nrows=2, ncols=1)
+axes[0].plot(loss)
+axes[0].plot(val_loss)
+axes[0].legend(["学習データ", "検証データ"])
+axes[1].plot(accuracy)
+axes[1].plot(val_accuracy)
+axes[1].legend(["学習データ", "検証データ"])
+plt.tight_layout()
+plt.savefig("figure/lossaccuracy.png")
