@@ -83,7 +83,7 @@ X = df.drop(columns='Survived')
 y = df[['Survived']]
 
 # 交差検証を行う
-kf = KFold(n_splits = 2)
+kf = KFold(n_splits = 40)
 for train_index, test_index in kf.split(X):
     X_train, X_test = X.iloc[train_index], X.iloc[test_index]
     y_train, y_test = y.iloc[train_index], y.iloc[test_index]
@@ -143,5 +143,5 @@ axes[0].legend(["学習データ", "検証データ"])
 axes[1].plot(accuracy)
 axes[1].plot(val_accuracy)
 axes[1].legend(["学習データ", "検証データ"])
-plt.tight_layout()
+#plt.tight_layout()
 plt.savefig("figure/lossaccuracy.png")
