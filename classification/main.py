@@ -77,12 +77,12 @@ test.loc[:,'Pclass'], test.loc[:,'Fare'] = tmp['Pclass'], tmp['Fare']
 # testの欠損値を中央値で埋める
 test['Fare'].fillna(test['Fare'].median(), inplace = True)
 
+# 特徴量
 X = df.drop(columns='Survived')
 y = df[['Survived']]
 
-
+# 交差検証を行う
 kf = KFold(n_splits = 40)
-
 for train_index, test_index in kf.split(X):
     X_train, X_test = X.iloc[train_index], X.iloc[test_index]
     y_train, y_test = y.iloc[train_index], y.iloc[test_index]
