@@ -81,7 +81,7 @@ X = df.drop(columns='Survived')
 y = df[['Survived']]
 
 
-kf = KFold(n_splits = 10)
+kf = KFold(n_splits = 40)
 
 for train_index, test_index in kf.split(X):
     X_train, X_test = X.iloc[train_index], X.iloc[test_index]
@@ -117,7 +117,7 @@ for train_index, test_index in kf.split(X):
     model.compile(loss = 'binary_crossentropy', optimizer = 'adam',  metrics = ['accuracy'])
 
     # 学習
-    fit = model.fit(X_train, y_train, epochs = 16, validation_data=(X_test, y_test), batch_size = 16, verbose = 2)
+    fit = model.fit(X_train, y_train, epochs = 6, validation_data=(X_test, y_test), batch_size = 16, verbose = 2)
 
     # 予測
     y_test_proba = model.predict(test)
@@ -152,3 +152,4 @@ plt.title('Training Loss')
 plt.xlabel('Epochs')
 plt.savefig("figure/Training Loss.png")
 plt.clf()
+print(f'k : {ent[0]} epoch : {ent[1]}')
