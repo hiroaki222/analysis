@@ -1,4 +1,4 @@
-from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from keras.layers import Activation, BatchNormalization, Dense
 from keras.layers.core import Dropout
@@ -10,6 +10,9 @@ import pandas as pd
 e = 50
 accuracy = []
 loss = []
+val_accuracy = []
+val_loss = []
+
 for i in range(4):
     # pandasDataFrameをすべて表示するための設定
     pd.set_option('display.max_rows', None)
@@ -92,9 +95,16 @@ for i in range(4):
     # testの欠損値を中央値で埋める
     test['Fare'].fillna(test['Fare'].median(), inplace = True)
 
-    # 学習データとテストデータを分ける
+    # 学習データと検証データを分ける
+    df, vali = train_test_split(df,test_size=0.4,random_state=0)
+
+    # 学習データ
     x = df.drop(columns='Survived')
     y = df[['Survived']]
+
+    # 検証データ
+    vx = vali.drop(columns='Survived')
+    vy = vali[['Survived']]
 
     activation, out_dim, dropout = 'relu', '702', 0.5
     # モデル指定
@@ -126,7 +136,7 @@ for i in range(4):
     model.compile(loss = 'binary_crossentropy', optimizer = 'adam',  metrics = ['accuracy'])
 
     # 学習
-    fit = model.fit(x, y, epochs = e, batch_size = 16, verbose = 2)
+    fit = model.fit(x, y, validation_data=(vx, vy), epochs = e, batch_size = 16, verbose = 2)
 
     # 予測
     y_test_proba = model.predict(test)
@@ -138,6 +148,8 @@ for i in range(4):
     # 学習データの精度を確認
     accuracy.append(fit.history['accuracy'])
     loss.append(fit.history['loss'])
+    val_accuracy.append(fit.history['val_accuracy'])
+    val_loss.append(fit.history['val_loss'])
 
 # 精度の履歴をプロット
 for i in range(len(accuracy)):
