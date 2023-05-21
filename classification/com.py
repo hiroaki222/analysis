@@ -157,7 +157,7 @@ for i in range(len(accuracy)):
 plt.title('学習精度')
 plt.xlabel('Epochs')
 plt.legend(["PclassごとのAgeの平均値補完", "PclassごとのAgeの中央値補完" ,"平均値", "中央値"])
-plt.savefig("ComparisonTrainingAccuracy.png")
+plt.savefig("figure/ComparisonTrainingAccuracy.png")
 plt.clf()
 
 # 損失の履歴をプロット
@@ -166,5 +166,5 @@ for i in range(len(loss)):
 plt.title('学習損失')
 plt.xlabel('Epochs')
 plt.legend(["PclassごとのAgeの平均値補完", "PclassごとのAgeの中央値補完" ,"平均値", "中央値"])
-plt.savefig("ComparisonTraining Loss.png")
+plt.savefig("figure/ComparisonTrainingLoss.png")
 plt.clf()
